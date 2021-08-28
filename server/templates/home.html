@@ -1,0 +1,35 @@
+{% extends './index.html' %} {% block body %}
+
+<div class="container">
+  <form action="/shorten" method="post">
+    <div class="row g-1">
+      <div class="col-12">
+        <input
+          type="text"
+          class="form-control"
+          name="url"
+          placeholder="🔗 URL to shorten"
+        />
+      </div>
+      <div class="col-6">
+        <input class="btn btn-success" type="submit" value="Shorten" />
+      </div>
+    </div>
+  </form>
+
+  {% if errors %}
+  <div class="alert alert-danger mt-4" role="alert">
+    <p>{{errors}}</p>
+  </div>
+  {% endif %} {% if short_url %}
+
+  <div class="mx-auto text-center mt-5">
+    <h2 class="text-success">Shortened URL</h2>
+    <p>⚡ Share the link below</p>
+    <p class="">{{short_url}}</p>
+    <p><span class="text-success">Previous URL:</span> {{long_url}}</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock body %}
