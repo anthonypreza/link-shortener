@@ -28,7 +28,6 @@ app = FastAPI()
 
 app.mount("/static", StaticFiles(directory=f"{dir_}/static"), name="static")
 
-
 templates = Jinja2Templates(directory=f"{dir_}/templates")
 
 
@@ -48,7 +47,9 @@ async def shorten_link(request: Request):
     url = form_data["url"] if "url" in form_data else ""
 
     if not validators.url(url):
-        return templates.TemplateResponse("home.html", {"request": request, "errors": "Please provide a valid URL."})
+        return templates.TemplateResponse(
+            "home.html", {"request": request, "errors": "Please provide a valid URL."}
+        )
 
     def get_unique_code(session: Session):
         code = Link.create_code()
@@ -69,7 +70,9 @@ async def shorten_link(request: Request):
         session.commit()
         session.refresh(link)
 
-    return templates.TemplateResponse("home.html", {"request": request, "long_url": url, "short_url": short_url})
+    return templates.TemplateResponse(
+        "home.html", {"request": request, "long_url": url, "short_url": short_url}
+    )
 
 
 @app.get("/{code}")
