@@ -43,25 +43,25 @@ async def home(request: Request):
 
 
 @app.post("/shorten")
-async def shorten_link(request: Request, response_model=Link):
+async def shorten_link(request: Request):
     form_data = await request.form()
-    url = form_data.get("url", "")
+    url = form_data["url"] if "url" in form_data else ""
 
     if not validators.url(url):
         return templates.TemplateResponse("home.html", {"request": request, "errors": "Please provide a valid URL."})
 
-    def get_unique_code():
+    def get_unique_code(session: Session):
         code = Link.create_code()
         statement = select(Link).where(Link.code == code)
         results = session.exec(statement)
 
         if results.first() is not None:
-            return get_unique_code()
+            return get_unique_code(session)
 
         return code
 
     with Session(engine) as session:
-        code = get_unique_code()
+        code = get_unique_code(session)
         short_url = posixpath.join(request.url_for("home"), code)
         link = Link(long_url=url, code=code, short_url=short_url)
 
